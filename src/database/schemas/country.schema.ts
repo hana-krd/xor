@@ -12,7 +12,10 @@ export class Country {
     @Prop()
     language: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Currency' })
+    @Prop({ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Currency'
+     })
     currency: Currency;
 
 }

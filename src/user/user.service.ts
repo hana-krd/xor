@@ -9,7 +9,8 @@ export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    var found = await this.userModel.findOne({ mobile: createUserDto.mobile });
+    var found = await this.userModel.findOne({ mobile: createUserDto.mobile })
+    .populate('nantionality');
 
     if (found) {
       throw new ConflictException(
