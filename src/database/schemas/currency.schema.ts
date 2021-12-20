@@ -9,4 +9,4 @@ export class Currency{
 
 }
 
-export const CountrySchema = SchemaFactory.createForClass(Currency);
+export const CurrencySchema = SchemaFactory.createForClass(Currency);
