@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Country } from './country.schema';
 import * as mongoose from 'mongoose';
+import { Role } from './role.schema';
 
 export type UserDocument = User & Document;
 
@@ -35,6 +36,13 @@ export class User {
 
     @Prop()
     nationalCode: string;
+
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'Role' }
+        ]
+    })
+    roles: Role[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
