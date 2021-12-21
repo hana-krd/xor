@@ -30,7 +30,6 @@ export class User {
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Country',
-        default: '61c05a008881f3c4e716b17b'
     })
     nanionality: Country;
 
@@ -43,6 +42,9 @@ export class User {
         ]
     })
     roles: Role[];
+
+    @Prop()
+    income: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
