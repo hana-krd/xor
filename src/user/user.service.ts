@@ -21,7 +21,7 @@ export class UserService {
           { nationalCode: createUserDto.nationalCode },
         ],
       })
-      .populate('nantionality')
+      .populate('nationality')
       .exec();
 
     if (found) {
@@ -34,9 +34,10 @@ export class UserService {
   }
 
   async findUserById(userId): Promise<User> {
+    
     const found = await this.userModel
       .findOne({ _id: userId })
-      .populate('nantionality')
+      .populate('nationality')
       .exec();
 
     if (!found) {
