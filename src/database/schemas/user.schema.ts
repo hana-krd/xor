@@ -31,7 +31,7 @@ export class User {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Country',
     })
-    nanionality: Country;
+    nationality: Country;
 
     @Prop()
     nationalCode: string;

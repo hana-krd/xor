@@ -1,10 +1,12 @@
 import {
     IsMobilePhone,
     IsNotEmpty,
+    IsNumber,
     IsString,
     MaxLength,
     MinLength,
 } from 'class-validator';
+import { isValidObjectId } from 'mongoose';
 
 export class CreateUserDto {
     @IsString()
@@ -27,19 +29,15 @@ export class CreateUserDto {
     @IsMobilePhone()
     mobile: string;
 
-    nanionality: {
-        name: string;
-
-        language: string;
-
-        currency: {
-            iso: string;
-        };
-    };
+    @IsNotEmpty()
+    nanionality: string;
 
     @IsString()
     @IsNotEmpty()
     @MinLength(8)
     @MaxLength(200)
     nationalCode: string;
+
+    @IsNumber()
+    income: number;
 }
