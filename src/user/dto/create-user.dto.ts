@@ -30,7 +30,7 @@ export class CreateUserDto {
     mobile: string;
 
     @IsNotEmpty()
-    nanionality: string;
+    nationality: string;
 
     @IsString()
     @IsNotEmpty()

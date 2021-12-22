@@ -2,23 +2,23 @@ import { UserRoles } from "../../static/enum/user-role.enum";
 
 export class UserFilterDto{
 
-    name: string;
+    name?: string;
 
-    middleName: string;
+    middleName?: string;
 
-    family: string;
+    family?: string;
 
-    avatar: string;
+    avatar?: string;
 
-    mobile: string;
+    mobile?: string;
 
-    nationality: string;
+    nationality?: string;
 
-    nationalCode: string;
+    nationalCode?: string;
 
-    roles: UserRoles[];
+    roles?: UserRoles[];
 
-    income_greater_than: number;
+    income_greater_than?: number;
 
-    income_lower_than: number;
+    income_lower_than?: number;
 }

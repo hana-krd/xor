@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { User } from '../database/schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
@@ -30,6 +30,22 @@ export class UserController {
             });
 
     }
+
+    @Put(':id')
+    async updateUserInformation(
+        @Param('id') userId: string, 
+        @Param('filed') filed: String,
+        @Body() userDto: CreateUserDto,
+        @Res() res
+        ){
+            const result = await this.userService.updateUser(userId, userDto);
+            return res.status(200)
+            .json({
+                message:
+                 (result.modifiedCount | result.matchedCount)? 
+                 'updated successfully': 'nothing happened'
+            });
+        }
 
 
 }
