@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { CountryModule } from './country/country.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { CountryModule } from './country/country.module';
       }
     ),
     UserModule,
-    CountryModule
+    CountryModule,
+    FileModule
   ],
   controllers: [AppController],
   providers: [AppService],

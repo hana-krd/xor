@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Query, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { User } from '../database/schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
@@ -34,7 +34,7 @@ export class UserController {
     @Put(':id')
     async updateUserInformation(
         @Param('id') userId: string, 
-        @Param('filed') filed: String,
+        @Param('filed') filed: string,
         @Body() userDto: CreateUserDto,
         @Res() res
         ){
@@ -45,7 +45,22 @@ export class UserController {
                  (result.modifiedCount | result.matchedCount)? 
                  'updated successfully': 'nothing happened'
             });
-        }
+    }
 
+    @Patch(':id/avatar')
+    async updateUserAvatar(
+        @Param('id') userId: string,
+        @Body('fileId') fileId: string,
+        @Res() res
+    ) {
+        const result = await this.userService.updateUserAvatar(userId, fileId);
+
+        return res.status(200)
+            .json({
+                message:
+                    (result.modifiedCount | result.matchedCount) ?
+                        'updated successfully' : 'nothing happened'
+            });
+    }
 
 }

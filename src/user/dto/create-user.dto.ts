@@ -25,9 +25,9 @@ export class CreateUserDto {
 
     avatar: string;
 
-    @IsNotEmpty()
+    @IsString()
     @IsMobilePhone()
-    mobile: string;
+    mobile?: string;
 
     @IsNotEmpty()
     nationality: string;

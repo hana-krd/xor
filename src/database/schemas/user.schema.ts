@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { Country } from './country.schema';
 import * as mongoose from 'mongoose';
 import { Role } from './role.schema';
+import { File } from './file.schema';
 
 export type UserDocument = User & Document;
 
@@ -24,8 +25,11 @@ export class User {
     })
     family: string;
 
-    @Prop()
-    avatar: string;
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    })
+    avatar: File;
 
     @Prop()
     mobile: string;

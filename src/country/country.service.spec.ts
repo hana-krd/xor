@@ -1,18 +1,32 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CountryService } from './country.service';
+import { Model } from "mongoose";
+import { async } from "rxjs";
+import { Country, CountryDocument } from "../database/schemas/country.schema";
 
-describe('CountryService', () => {
-  let service: CountryService;
+const mockCurrency = {
+    iso: 'IRT'
+}
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [CountryService],
-    }).compile();
+const mockCountry: Country[] = [
+    {name: 'Iran', language: 'fa', currency: {iso: 'IRT'}},
+    {name: 'Iraq', language: 'ar', currency: {iso: 'IQD'}},
+]
 
-    service = module.get<CountryService>(CountryService);
-  });
+describe('countryService', ()=>{
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    let countryModel: Model<CountryDocument>;
+
+    beforeEach(()=>{
+        countryModel = new Model();
+        countryModel.find = jest.fn().mockResolvedValue(mockCountry);
+        countryModel.populate = jest.fn().mockResolvedValue(mockCurrency);
+    
+    });
+
+    it('getAllCountries', async ()=>{
+        expect(countryModel.find).not.toBeCalled();
+        const result = countryModel.find({_id: '123456789'}).populate('currency');
+        expect(result).toEqual(mockCountry);
+        expect(countryModel.populate).toBeCalled();
+    })
+
 });

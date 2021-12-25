@@ -16,20 +16,22 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const found = await this.userModel
       .findOne({
-        $or: [
-          { mobile: createUserDto.mobile },
+        $and: [
+          { nationality: createUserDto.nationality },
           { nationalCode: createUserDto.nationalCode },
         ],
       })
       .populate('nationality')
+      .populate('avatar')
       .exec();
 
     if (found) {
       throw new ConflictException(
-        `User ${createUserDto.mobile} already exists`,
+        `User National Code ${createUserDto.nationalCode} already exists`,
       );
     }
 
+    //TODO manage roles in user creation and update
     return this.userModel.create(createUserDto);
   }
 
@@ -38,6 +40,7 @@ export class UserService {
     const found = await this.userModel
       .findOne({ _id: userId })
       .populate('nationality')
+      .populate('avatar')
       .exec();
 
     if (!found) {
@@ -63,6 +66,7 @@ export class UserService {
       ]
     })
       .populate('nationality')
+      .populate('avatar')
       .exec();
 
     return found;
@@ -70,18 +74,6 @@ export class UserService {
 
   async updateUser(userId: string, userDto: CreateUserDto): Promise<any> {
     await this.findUserById(userId);
-    const userFoundByMobile = await this.search({ mobile: userDto.mobile });
-
-    //Todo we need to check nationality and national code
-    if (
-      userFoundByMobile
-      && userFoundByMobile.length > 0
-      && (userFoundByMobile[0]._id.toString() !== userId)
-    ) {
-
-      throw new ConflictException(`Mobile ${userDto.mobile} already exists`);
-    }
-
     const result = await this.userModel.updateOne(
       { _id: userId },
       {
@@ -100,4 +92,19 @@ export class UserService {
     return result;
   }
 
+
+  async updateUserAvatar(userId: string, fileId: string) {
+    await this.findUserById(userId);
+    const result = await this.userModel.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          avatar: fileId,
+        }
+      },
+    ).exec(); 
+
+    return result;
+
+  }
 }
