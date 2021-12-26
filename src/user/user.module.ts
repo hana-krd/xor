@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../database/schemas/user.schema';
 import { Country, CountrySchema } from '../database/schemas/country.schema';
 import { CurrencySchema, Currency } from '../database/schemas/currency.schema';
+import { UserRole, UserRoleSchema } from '../database/schemas/user-role.schema';
 
 @Module({
   imports:[
@@ -17,10 +18,14 @@ import { CurrencySchema, Currency } from '../database/schemas/currency.schema';
       },
       {
         name: Currency.name, schema: CurrencySchema
+      },
+      {
+        name: UserRole.name, schema: UserRoleSchema
       }
     ])
   ],
   controllers: [UserController],
-  providers: [UserService]
+  providers: [UserService],
+  exports:[UserService]
 })
 export class UserModule {}

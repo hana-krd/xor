@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { CountryModule } from './country/country.module';
 import { FileModule } from './file/file.module';
+import { CharitiesModule } from './charities/charities.module';
 
 @Module({
   imports: [
@@ -19,9 +18,10 @@ import { FileModule } from './file/file.module';
     ),
     UserModule,
     CountryModule,
-    FileModule
+    FileModule,
+    CharitiesModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

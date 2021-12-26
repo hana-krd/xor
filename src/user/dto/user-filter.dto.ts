@@ -1,4 +1,4 @@
-import { UserRoles } from "../../static/enum/user-role.enum";
+import { Roles } from "../../static/enum/role.enum";
 
 export class UserFilterDto{
 
@@ -16,7 +16,7 @@ export class UserFilterDto{
 
     nationalCode?: string;
 
-    roles?: UserRoles[];
+    roles?: Roles[];
 
     income_greater_than?: number;
 

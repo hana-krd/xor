@@ -1,0 +1,81 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { Country } from './country.schema';
+import * as mongoose from 'mongoose';
+import { File } from './file.schema';
+import { User } from './user.schema';
+import { UserRole } from './user-role.schema';
+
+export type CharityDocument = Charity & Document;
+
+@Schema()
+export class Charity {
+
+    _id: mongoose.ObjectId;
+
+    @Prop({
+        required: true,
+    })
+    name: string;
+
+    @Prop({
+        type: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ]
+    })
+    founders: User[];
+
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    })
+    owner: User;
+
+    @Prop()
+    telephoneNumber: string;
+
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File',
+    })
+    avatar: File;
+
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Country',
+    })
+    nationality: Country;
+
+    //TODO add branches as sub document 
+
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'UserRole' }
+        ]
+    })
+    admins: UserRole[];
+
+
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+        ]
+    })
+    needies: User[];
+
+
+    //TODO we need to know about charities legal document
+    // and their licenses
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'File' }
+        ]
+    })
+    legalFiles: File[];
+
+}
+
+export const CharitySchema = SchemaFactory.createForClass(Charity);

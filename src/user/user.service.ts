@@ -5,13 +5,20 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, _FilterQuery } from 'mongoose';
+import { UserRoleDto } from './dto/create-user-role.dto';
+import { UserRole, UserRoleDocument } from '../database/schemas/user-role.schema';
 import { User, UserDocument } from '../database/schemas/user.schema';
+import { OrganType } from '../static/enum/organ-type.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
+import { Roles } from '../static/enum/role.enum';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(UserRole.name) private userRoleModel: Model<UserRoleDocument>
+  ) { }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const found = await this.userModel
@@ -60,7 +67,6 @@ export class UserService {
         filters.middleName ? { 'middleName': { $regex: filters.middleName, $options: 'i' } } : {},
         filters.nationality ? { 'nationality': { $regex: filters.nationality, $options: 'i' } } : {},
         filters.nationalCode ? { 'nationalCode': { $regex: filters.nationalCode, $options: 'i' } } : {},
-        filters.roles ? { 'roles': { $in: filters.roles, $exists: true, $ne: null } } : {},
         filters.income_greater_than ? { 'income': { $gte: filters.income_greater_than, $exists: true, $ne: null } } : {},
         filters.income_lower_than ? { 'income': { $lte: filters.income_lower_than, $exists: true, $ne: null } } : {},
       ]
@@ -92,7 +98,6 @@ export class UserService {
     return result;
   }
 
-
   async updateUserAvatar(userId: string, fileId: string) {
     await this.findUserById(userId);
     const result = await this.userModel.updateOne(
@@ -102,9 +107,42 @@ export class UserService {
           avatar: fileId,
         }
       },
-    ).exec(); 
+    ).exec();
 
     return result;
-
   }
+
+  async addRole(userRoleDto: UserRoleDto): Promise<UserRole> {
+
+    const userRole = await this.userRoleModel.findOne({
+      $and: [
+        { user: userRoleDto.user },
+        { organ: userRoleDto.organ },
+      ]
+    }).populate('roles')
+      .exec();
+
+    if (userRole) {
+      const newRoles: Roles[] = userRoleDto.roles.filter((role) => {
+        if (userRole.roles.indexOf(role) === -1) {
+          return role;
+        }
+      });
+
+      newRoles.forEach(role => {
+        userRole.roles.push(role);
+      });
+
+      userRole.save();
+
+
+    } else {
+      return this.userRoleModel.create(userRoleDto);
+    }
+  }
+
+  async deleteRole(userRoleId: string) {
+    return this.userRoleModel.remove({_id: userRoleId}).exec()
+  }
+
 }
