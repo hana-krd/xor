@@ -52,10 +52,10 @@ export class CharitiesService {
         return await this.userService.addRole(userRoleDto);
     }
 
-    async addManager(charityId: string, roles: Roles[], user: User): Promise<UserRole> {
+    async addManager(charityId: string, roles: Roles[], user: string): Promise<UserRole> {
 
         const userRoleDto: UserRoleDto = {
-            user: user._id.toString(),
+            user: user,
             organ: charityId,
             organType: OrganType.CHARITY,
             roles: roles
@@ -63,20 +63,27 @@ export class CharitiesService {
 
         const charity = await this.getCharityById(charityId);
         const userRole = await this.userService.addRole(userRoleDto);
-
-        charity.admins.push(userRole);
-        charity.save();
+        
+        if (charity.admins.indexOf(userRole._id) === -1) {
+            charity.admins.push(userRole);
+            charity.save();
+        }
 
         return userRole;
     }
 
     async deleteManager(charityId: string, userRoleId: string) {
         const charity = await this.getCharityById(charityId);
-        const deleteResult = this.userService.deleteRole(userRoleId);
+        const deleteResult = this.userService.deleteAllRoles(userRoleId);
 
         charity.admins = charity.admins.filter(
             (admin) => admin._id.toString() !== userRoleId);
         charity.save();
+
         return deleteResult;
+    }
+
+    async deleteManagerRole(userRoleId: string, role: Roles) {
+        return this.userService.deleteSomeRoles(userRoleId, role);
     }
 }

@@ -133,16 +133,24 @@ export class UserService {
         userRole.roles.push(role);
       });
 
-      userRole.save();
-
-
+      return userRole.save();
     } else {
       return this.userRoleModel.create(userRoleDto);
     }
   }
 
-  async deleteRole(userRoleId: string) {
-    return this.userRoleModel.remove({_id: userRoleId}).exec()
+  async deleteAllRoles(userRoleId: string) {
+    return this.userRoleModel.deleteOne({ _id: userRoleId }).exec()
   }
 
+  async deleteSomeRoles(userRoleId: string, role: Roles) {
+    const userRole = await this.userRoleModel.findOne({ _id: userRoleId });
+
+    if (!userRole) {
+      throw new NotFoundException('this user is not in your charity');
+    }
+
+    userRole.roles = userRole.roles.filter((localRole) => localRole !== role);
+    return userRole.save();
+  }
 }

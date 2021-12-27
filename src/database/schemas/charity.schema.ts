@@ -56,7 +56,7 @@ export class Charity {
             { type: mongoose.Schema.Types.ObjectId, ref: 'UserRole' }
         ]
     })
-    admins: UserRole[];
+    admins;
 
 
     @Prop({

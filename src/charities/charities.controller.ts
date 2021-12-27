@@ -33,15 +33,20 @@ export class CharitiesController {
 
     @Post('/manager')
     async addCharityManager(
+        @Body('userId') user: string,
         @Body('charityId') charity: string,
         @Body('roles') roles: Roles[],
-        @GetUser() user: User,
+        @Res() res
     ) {
-        return this.charityService.addManager(
+        await this.charityService.addManager(
             charity,
             roles,
             user
         );
+        return res.status(200)
+            .json({
+                message: 'updated successfully'
+            });
     }
 
     @Delete('/manager')
@@ -50,13 +55,21 @@ export class CharitiesController {
         @Body('userRoleId') userRoleId: string,
         @Res() res
     ) {
-        const result = await this.charityService.deleteManager(charity ,userRoleId);
+        const result = await this.charityService.deleteManager(charity, userRoleId);
         return res.status(200)
             .json({
                 message:
-                    (result.modifiedCount | result.matchedCount) ?
-                        'updated successfully' : 'nothing happened'
+                    (result.deletedCount) ?
+                        'deleted successfully' : 'nothing happened'
             });
+    }
+
+    @Delete('/manager/role')
+    async removeCharityManagerRole(
+        @Body('role') role: Roles,
+        @Body('userRoleId') userRoleId: string
+    ) {
+        return this.charityService.deleteManagerRole(userRoleId ,role);
     }
 
 }
