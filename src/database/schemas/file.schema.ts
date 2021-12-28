@@ -5,7 +5,7 @@ import { User } from "./user.schema";
 
 export type FileDocument = File & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class File {
 
     _id: mongoose.ObjectId;

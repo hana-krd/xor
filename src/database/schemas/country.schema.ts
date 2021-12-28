@@ -4,7 +4,7 @@ import { Currency } from "./currency.schema";
 
 export type CountryDocument = Country & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Country {
     @Prop()
     name: string;

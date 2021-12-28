@@ -8,7 +8,7 @@ import { UserRole } from './user-role.schema';
 
 export type CharityDocument = Charity & Document;
 
-@Schema()
+@Schema({timestamps: true})
 export class Charity {
 
     _id: mongoose.ObjectId;

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 export type OrganSocument = Organ & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Organ{
 
     @Prop()

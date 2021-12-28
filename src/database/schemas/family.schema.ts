@@ -3,7 +3,8 @@ import { User } from "./user.schema";
 import * as mongoose from 'mongoose';
 
 export type FamilyDocument = Family & Document;
-@Schema()
+
+@Schema({ timestamps: true })
 export class Family {
 
     @Prop()

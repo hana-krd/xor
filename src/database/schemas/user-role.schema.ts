@@ -7,7 +7,7 @@ import { Roles } from '../../static/enum/role.enum';
 
 export type UserRoleDocument = UserRole & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class UserRole {
 
     _id: mongoose.ObjectId;
