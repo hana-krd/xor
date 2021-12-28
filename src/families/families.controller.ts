@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { User } from '../database/schemas/user.schema';
 import { GetUser } from '../user/user-decorator';
 import { CreateFamilyDto } from './dto/create-family.dto';
@@ -16,5 +16,10 @@ export class FamiliesController {
         @GetUser() admin: User,
     ) {
         return this.familyService.createFamily(familyDto, admin)
+    }
+
+    @Get(':id')
+    getFamily(@Param('id') familyId: string) {
+        return this.familyService.getFamilyById(familyId);
     }
 }
