@@ -13,6 +13,11 @@ export class AuthController {
     @Post('/signin')
     @UseGuards(LocalAuthGuard)
     signIn(@Request() req) {
-        return this.authService.login(req.user);
+        return this.authService.signIn(req.user);
+    }
+
+    @Post('auth/signup')
+    signUp() {
+        return this.authService.signUp();
     }
 }
