@@ -5,6 +5,7 @@ import { CountryModule } from './country/country.module';
 import { FileModule } from './file/file.module';
 import { CharitiesModule } from './charities/charities.module';
 import { FamiliesModule } from './families/families.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { FamiliesModule } from './families/families.module';
     CountryModule,
     FileModule,
     CharitiesModule,
-    FamiliesModule
+    FamiliesModule,
+    AuthModule
   ],
   controllers: [],
   providers: [],

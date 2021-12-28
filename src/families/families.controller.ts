@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { User } from '../database/schemas/user.schema';
 import { GetUser } from '../user/user-decorator';
 import { CreateFamilyDto } from './dto/create-family.dto';
-import { FamilyFilterDto } from './dto/falimy-filter.dto';
+import { FamilyFilterDto } from './dto/family-filter.dto';
 import { FamiliesService } from './families.service';
 
 @Controller('families')
@@ -20,6 +20,7 @@ export class FamiliesController {
     }
 
     @Get()
+    @UsePipes(ValidationPipe)
     getAllFamilies(@Body() filter: FamilyFilterDto) {
         return this.familyService.getAllFamilies(filter);
     }

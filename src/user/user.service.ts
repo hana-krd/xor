@@ -57,6 +57,26 @@ export class UserService {
     return found;
   }
 
+  async findUserByUsername(username): Promise<User> {
+
+    const found = await this.userModel
+      .findOne({
+        $or: [
+          { mobile: username },
+          { email: username }
+        ]
+      })
+      .populate('nationality')
+      .populate('avatar')
+      .exec();
+
+    if (!found) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    return found;
+  }
+
   async search(filters?: UserFilterDto): Promise<User[]> {
 
     const found = await this.userModel.find({

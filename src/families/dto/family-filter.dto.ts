@@ -1,4 +1,6 @@
-export class FamilyFilterDto{
+import { IsNotEmpty, IsString } from "class-validator";
+
+export class FamilyFilterDto {
 
     name: string;
 

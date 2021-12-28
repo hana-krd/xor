@@ -44,6 +44,15 @@ export class User {
 
     @Prop()
     income: number;
+
+    @Prop()
+    email: string;
+
+    @Prop()
+    password: string;
+
+    @Prop()
+    salt: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
