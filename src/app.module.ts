@@ -4,6 +4,7 @@ import { UserModule } from './user/user.module';
 import { CountryModule } from './country/country.module';
 import { FileModule } from './file/file.module';
 import { CharitiesModule } from './charities/charities.module';
+import { FamiliesModule } from './families/families.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { CharitiesModule } from './charities/charities.module';
     UserModule,
     CountryModule,
     FileModule,
-    CharitiesModule
+    CharitiesModule,
+    FamiliesModule
   ],
   controllers: [],
   providers: [],

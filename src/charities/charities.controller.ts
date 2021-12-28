@@ -69,7 +69,7 @@ export class CharitiesController {
         @Body('role') role: Roles,
         @Body('userRoleId') userRoleId: string
     ) {
-        return this.charityService.deleteManagerRole(userRoleId ,role);
+        return this.charityService.deleteManagerRole(userRoleId, role);
     }
 
 }

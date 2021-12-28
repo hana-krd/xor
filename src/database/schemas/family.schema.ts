@@ -1,11 +1,14 @@
-import { Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { User } from "./user.schema";
 import * as mongoose from 'mongoose';
 
 export type FamilyDocument = Family & Document;
-
+@Schema()
 export class Family {
 
+    @Prop()
+    name: string;
+        
     @Prop({
         type: [
             {
@@ -14,13 +17,25 @@ export class Family {
             }
         ]
     })
-    members: User[];
+    members;
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'USer'
+        ref: 'User'
     })
-    head: User;
+    head: string;
+
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    })
+    creator: string;
+
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Charity'
+    })
+    charity: string;
 
 }
 
