@@ -8,5 +8,7 @@ export class ExtraInfo {
 
     mobileVerificationDate?: Date;
 
+    otpExpiresAt?: Date;
+
     otp?: string;
 }

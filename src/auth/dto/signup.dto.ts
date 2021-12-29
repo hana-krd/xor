@@ -1,4 +1,4 @@
-import { IsEmail, IsMobilePhone, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
+import { IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from "class-validator";
 
 export class SignUpDto {
 
@@ -7,14 +7,14 @@ export class SignUpDto {
     email: string;
 
     @IsMobilePhone()
+    @IsOptional()
     mobile: string;
+
+    @IsOptional()
     nationality: string;
 
     salt: string;
 
-    @IsNotEmpty()
-    @IsString()
-    @MinLength(4)
     @Matches(
         /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
         { message: 'Password is too weak' })

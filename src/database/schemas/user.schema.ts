@@ -14,7 +14,7 @@ export class User {
     _id: mongoose.ObjectId;
 
     @Prop({
-        required: true,
+        required: false,
     })
     name: string;
 
@@ -22,7 +22,7 @@ export class User {
     middleName: string;
 
     @Prop({
-        required: true,
+        required: false,
     })
     family: string;
 

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -6,29 +7,36 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, _FilterQuery } from 'mongoose';
 import { UserRoleDto } from './dto/create-user-role.dto';
-import { UserRole, UserRoleDocument } from '../database/schemas/user-role.schema';
+import {
+  UserRole,
+  UserRoleDocument,
+} from '../database/schemas/user-role.schema';
 import { User, UserDocument } from '../database/schemas/user.schema';
 import { OrganType } from '../static/enum/organ-type.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { Roles } from '../static/enum/role.enum';
 import { SignUpDto } from '../auth/dto/signup.dto';
+import { randomInt } from 'crypto';
+import * as bcrypt from 'bcrypt';
+import { VerifyOtpDto } from '../auth/dto/verify-otp.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @InjectModel(UserRole.name) private userRoleModel: Model<UserRoleDocument>
-  ) { }
+    @InjectModel(UserRole.name) private userRoleModel: Model<UserRoleDocument>,
+  ) {}
 
-  async createUserWithoutCredential(createUserDto: CreateUserDto): Promise<User> {
-    const found = await this.userModel
-      .findOne({
-        $and: [
-          { nationality: createUserDto.nationality },
-          { nationalCode: createUserDto.nationalCode },
-        ],
-      });
+  async createUserWithoutCredential(
+    createUserDto: CreateUserDto,
+  ): Promise<User> {
+    const found = await this.userModel.findOne({
+      $and: [
+        { nationality: createUserDto.nationality },
+        { nationalCode: createUserDto.nationalCode },
+      ],
+    });
 
     if (found) {
       throw new ConflictException(
@@ -38,20 +46,16 @@ export class UserService {
     return this.userModel.create(createUserDto);
   }
 
-  async createUserWithCredential(signupDto: SignUpDto): Promise<User> {
-    const found = await this.userModel
-      .findOne({ email: signupDto.email });
+  async createUserWithCredential(signupDto: SignUpDto): Promise<UserDocument> {
+    const found = await this.userModel.findOne({ email: signupDto.email });
 
     if (found) {
-      throw new ConflictException(
-        `Email ${signupDto.email} already exists`,
-      );
+      throw new ConflictException(`Email ${signupDto.email} already exists`);
     }
     return this.userModel.create(signupDto);
   }
 
   async findUserById(userId): Promise<User> {
-
     const found = await this.userModel
       .findOne({ _id: userId })
       .populate('nationality')
@@ -66,13 +70,9 @@ export class UserService {
   }
 
   async findUserByUsername(username): Promise<User> {
-
     const found = await this.userModel
       .findOne({
-        $or: [
-          { mobile: username },
-          { email: username }
-        ]
+        $or: [{ mobile: username }, { email: username }],
       })
       .populate('nationality')
       .populate('avatar')
@@ -86,19 +86,45 @@ export class UserService {
   }
 
   async search(filters?: UserFilterDto): Promise<User[]> {
-
-    const found = await this.userModel.find({
-      $and: [
-        filters.name ? { 'name': { $regex: filters.name, $options: 'i' } } : {},
-        filters.family ? { 'family': { $regex: filters.family, $options: 'i' } } : {},
-        filters.mobile ? { 'mobile': { $regex: filters.mobile, $options: 'i' } } : {},
-        filters.middleName ? { 'middleName': { $regex: filters.middleName, $options: 'i' } } : {},
-        filters.nationality ? { 'nationality': { $regex: filters.nationality, $options: 'i' } } : {},
-        filters.nationalCode ? { 'nationalCode': { $regex: filters.nationalCode, $options: 'i' } } : {},
-        filters.income_greater_than ? { 'income': { $gte: filters.income_greater_than, $exists: true, $ne: null } } : {},
-        filters.income_lower_than ? { 'income': { $lte: filters.income_lower_than, $exists: true, $ne: null } } : {},
-      ]
-    })
+    const found = await this.userModel
+      .find({
+        $and: [
+          filters.name ? { name: { $regex: filters.name, $options: 'i' } } : {},
+          filters.family
+            ? { family: { $regex: filters.family, $options: 'i' } }
+            : {},
+          filters.mobile
+            ? { mobile: { $regex: filters.mobile, $options: 'i' } }
+            : {},
+          filters.middleName
+            ? { middleName: { $regex: filters.middleName, $options: 'i' } }
+            : {},
+          filters.nationality
+            ? { nationality: { $regex: filters.nationality, $options: 'i' } }
+            : {},
+          filters.nationalCode
+            ? { nationalCode: { $regex: filters.nationalCode, $options: 'i' } }
+            : {},
+          filters.income_greater_than
+            ? {
+                income: {
+                  $gte: filters.income_greater_than,
+                  $exists: true,
+                  $ne: null,
+                },
+              }
+            : {},
+          filters.income_lower_than
+            ? {
+                income: {
+                  $lte: filters.income_lower_than,
+                  $exists: true,
+                  $ne: null,
+                },
+              }
+            : {},
+        ],
+      })
       .populate('nationality')
       .populate('avatar')
       .exec();
@@ -108,46 +134,48 @@ export class UserService {
 
   async updateUser(userId: string, userDto: CreateUserDto): Promise<any> {
     await this.findUserById(userId);
-    const result = await this.userModel.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          name: userDto.name,
-          family: userDto.family,
-          middleName: userDto.middleName,
-          mobile: userDto.mobile,
-          nationality: userDto.nationality,
-          nationalCode: userDto.nationalCode,
-          income: userDto.income,
-        }
-      },
-    ).exec();
+    const result = await this.userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            name: userDto.name,
+            family: userDto.family,
+            middleName: userDto.middleName,
+            mobile: userDto.mobile,
+            nationality: userDto.nationality,
+            nationalCode: userDto.nationalCode,
+            income: userDto.income,
+          },
+        },
+      )
+      .exec();
 
     return result;
   }
 
   async updateUserAvatar(userId: string, fileId: string) {
     await this.findUserById(userId);
-    const result = await this.userModel.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          avatar: fileId,
-        }
-      },
-    ).exec();
+    const result = await this.userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            avatar: fileId,
+          },
+        },
+      )
+      .exec();
 
     return result;
   }
 
   async addRole(userRoleDto: UserRoleDto): Promise<UserRole> {
-
-    const userRole = await this.userRoleModel.findOne({
-      $and: [
-        { user: userRoleDto.user },
-        { organ: userRoleDto.organ },
-      ]
-    }).populate('roles')
+    const userRole = await this.userRoleModel
+      .findOne({
+        $and: [{ user: userRoleDto.user }, { organ: userRoleDto.organ }],
+      })
+      .populate('roles')
       .exec();
 
     if (userRole) {
@@ -157,7 +185,7 @@ export class UserService {
         }
       });
 
-      newRoles.forEach(role => {
+      newRoles.forEach((role) => {
         userRole.roles.push(role);
       });
 
@@ -168,7 +196,7 @@ export class UserService {
   }
 
   async deleteAllRoles(userRoleId: string) {
-    return this.userRoleModel.deleteOne({ _id: userRoleId }).exec()
+    return this.userRoleModel.deleteOne({ _id: userRoleId }).exec();
   }
 
   async deleteSomeRoles(userRoleId: string, role: Roles) {
@@ -180,5 +208,65 @@ export class UserService {
 
     userRole.roles = userRole.roles.filter((localRole) => localRole !== role);
     return userRole.save();
+  }
+
+  async newOtp(user: User): Promise<string> {
+    const otp = randomInt(111111, 999999).toString();
+    const hashed = await bcrypt.hash(otp, user.salt);
+
+    const expireDate = new Date();
+    expireDate.setHours(expireDate.getHours() + 1);
+
+    if (!user.extraInfo) {
+      user.extraInfo = {};
+    }
+
+    await this.userModel.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          'extraInfo.otp': hashed,
+          'extraInfo.otpExpiresAt': expireDate,
+        },
+      },
+    );
+
+    return otp;
+  }
+
+  async validateOtp(user: User, otp: VerifyOtpDto): Promise<boolean> {
+    const hashed = await bcrypt.hash(otp.otp, user.salt);
+    const currentTime = new Date();
+
+    if (
+      hashed !== user.extraInfo.otp ||
+      currentTime > user.extraInfo.otpExpiresAt
+    ) {
+      throw new BadRequestException('OTP is wrong OR Expired');
+    }
+
+    await this.userModel.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          'extraInfo.isEmailVerified': true,
+          'extraInfo.otp': null,
+          'extraInfo.otpExpiresAt': null,
+        },
+      },
+    );
+
+    return true;
+  }
+
+  async emailVerified(user: User):Promise<void> {
+    await this.userModel.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          'extraInfo.isEmailVerified': true,
+        },
+      },
+    );
   }
 }
