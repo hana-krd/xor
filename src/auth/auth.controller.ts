@@ -2,6 +2,7 @@ import { Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './AuthGuards/local-auth.guard';
+import { SignUpDto } from './dto/signup.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,12 +13,14 @@ export class AuthController {
 
     @Post('/signin')
     @UseGuards(LocalAuthGuard)
-    signIn(@Request() req) {
+    signInNormal(@Request() req) {
         return this.authService.signIn(req.user);
     }
 
     @Post('auth/signup')
-    signUp() {
-        return this.authService.signUp();
+    signUpNormal(signupDto: SignUpDto) {
+        return this.authService.signUp(signupDto);
     }
+
+    //TODO check other ways like fb, google to signin/signup
 }

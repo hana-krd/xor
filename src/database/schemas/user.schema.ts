@@ -3,8 +3,10 @@ import { Document } from 'mongoose';
 import { Country } from './country.schema';
 import * as mongoose from 'mongoose';
 import { File } from './file.schema';
+import { ExtraInfo } from '../../common/model/user-extra-info.model';
 
 export type UserDocument = User & Document;
+
 
 @Schema({ timestamps: true })
 export class User {
@@ -53,6 +55,11 @@ export class User {
 
     @Prop()
     salt: string;
+
+    @Prop()
+    extraInfo: ExtraInfo;
+
 }
+
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -12,6 +12,7 @@ import { OrganType } from '../static/enum/organ-type.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { Roles } from '../static/enum/role.enum';
+import { SignUpDto } from '../auth/dto/signup.dto';
 
 @Injectable()
 export class UserService {
@@ -20,26 +21,33 @@ export class UserService {
     @InjectModel(UserRole.name) private userRoleModel: Model<UserRoleDocument>
   ) { }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUserWithoutCredential(createUserDto: CreateUserDto): Promise<User> {
     const found = await this.userModel
       .findOne({
         $and: [
           { nationality: createUserDto.nationality },
           { nationalCode: createUserDto.nationalCode },
         ],
-      })
-      .populate('nationality')
-      .populate('avatar')
-      .exec();
+      });
 
     if (found) {
       throw new ConflictException(
         `User National Code ${createUserDto.nationalCode} already exists`,
       );
     }
-
-    //TODO manage roles in user creation and update
     return this.userModel.create(createUserDto);
+  }
+
+  async createUserWithCredential(signupDto: SignUpDto): Promise<User> {
+    const found = await this.userModel
+      .findOne({ email: signupDto.email });
+
+    if (found) {
+      throw new ConflictException(
+        `Email ${signupDto.email} already exists`,
+      );
+    }
+    return this.userModel.create(signupDto);
   }
 
   async findUserById(userId): Promise<User> {

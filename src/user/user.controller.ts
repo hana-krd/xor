@@ -16,7 +16,7 @@ export class UserController {
     @Post()
     @UsePipes(ValidationPipe)
     createUser(@Body() createUser: CreateUserDto): Promise<User> {
-        return this.userService.createUser(createUser);
+        return this.userService.createUserWithoutCredential(createUser);
     }
 
     @Get(':id')

@@ -6,7 +6,6 @@ import {
     MaxLength,
     MinLength,
 } from 'class-validator';
-import { isValidObjectId } from 'mongoose';
 
 export class CreateUserDto {
     @IsString()
