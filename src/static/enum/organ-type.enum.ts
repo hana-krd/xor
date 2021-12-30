@@ -1,4 +1,4 @@
 export enum OrganType{
-    CHARITY,
-    SUPPORT
+    CHARITY = "CHARITY",
+    SUPPORT = "SUPPORT"
 }

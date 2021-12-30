@@ -13,7 +13,7 @@ export class UserRole {
     _id: mongoose.ObjectId;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    user: User;
+    user;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId})
     organ: mongoose.ObjectId;

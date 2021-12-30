@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Family, FamilyDocument } from '../database/schemas/family.schema';
 import { User } from '../database/schemas/user.schema';
 import { CreateFamilyDto } from './dto/create-family.dto';
-import { FamilyFilterDto } from './dto/falimy-filter.dto';
+import { FamilyFilterDto } from './dto/family-filter.dto';
 
 @Injectable()
 export class FamiliesService {

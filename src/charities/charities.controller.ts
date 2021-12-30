@@ -4,15 +4,19 @@ import {
     Delete,
     Post,
     Res,
+    UseGuards,
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/Guards/jwt-auth.guard';
+import { UserVerifiedGuard } from '../auth/Guards/user-verified.guard';
 import { User } from '../database/schemas/user.schema';
 import { Roles } from '../static/enum/role.enum';
 import { GetUser } from '../user/user-decorator';
 import { CharitiesService } from './charities.service';
 import { createCharityDto } from './dto/create-charity.dto';
 
+@UseGuards(JwtAuthGuard, UserVerifiedGuard)
 @Controller('charities')
 export class CharitiesController {
     constructor(

@@ -5,6 +5,9 @@ import { CountryModule } from './country/country.module';
 import { FileModule } from './file/file.module';
 import { CharitiesModule } from './charities/charities.module';
 import { FamiliesModule } from './families/families.module';
+import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
+import { UserRolesModule } from './user-roles/user-roles.module';
 
 @Module({
   imports: [
@@ -21,7 +24,10 @@ import { FamiliesModule } from './families/families.module';
     CountryModule,
     FileModule,
     CharitiesModule,
-    FamiliesModule
+    FamiliesModule,
+    AuthModule,
+    MailModule,
+    UserRolesModule
   ],
   controllers: [],
   providers: [],
