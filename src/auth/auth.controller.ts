@@ -47,5 +47,14 @@ export class AuthController {
     });
   }
 
+  @Post('/otp')
+  @UseGuards(JwtAuthGuard)
+  async requestOtp(@GetUser() user: User, @Res() res) {
+    const result = await this.authService.requestOtp(user);
+    return res.status(200).json({
+      message: result ? 'OTP Send' : 'Some Problems Occurred',
+    });
+  }
+
   //TODO check other ways like fb, google to signin/signup
 }

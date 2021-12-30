@@ -215,12 +215,14 @@ export class UserService {
     const hashed = await bcrypt.hash(otp, user.salt);
 
     const expireDate = new Date();
-    expireDate.setHours(expireDate.getHours() + 1);
+    expireDate.setMinutes(expireDate.getMinutes() + 15);
 
     if (!user.extraInfo) {
       user.extraInfo = {};
     }
 
+    //TODO change otp for different platform and different ips 
+    //mobile otp, email otp, from web, from android, from ios,
     await this.userModel.updateOne(
       { _id: user._id },
       {

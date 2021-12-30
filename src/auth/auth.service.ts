@@ -40,12 +40,12 @@ export class AuthService {
     const payload = { userId: user._id };
     return {
       access_token: this.jwtService.sign(payload),
+      user: user,
     };
   }
 
   async signUp(signupDto: SignUpDto) {
     signupDto.salt = await bcrypt.genSalt();
-    console.log(signupDto.password, 'hi', signupDto.salt);
 
     signupDto.password = await bcrypt.hash(signupDto.password, signupDto.salt);
 
@@ -53,7 +53,6 @@ export class AuthService {
 
     const otp = (await this.usersService.newOtp(user)).toString();
     const mailResult = await this.mailService.sendOtp(otp, user.email);
-    console.log(otp);
 
     return this.signIn(user);
   }
@@ -65,5 +64,16 @@ export class AuthService {
     const validationResult = await this.usersService.validateOtp(user, otp);
     await this.usersService.emailVerified(user);
     return validationResult;
+  }
+
+  async requestOtp(user: User): Promise<boolean> {
+    if (user && user.extraInfo && user.extraInfo.isEmailVerified) {
+      throw new BadRequestException('User Already verified');
+    }
+
+    const otp = (await this.usersService.newOtp(user)).toString();
+    const mailResult = await this.mailService.sendOtp(otp, user.email);
+
+    return true;
   }
 }
