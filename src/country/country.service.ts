@@ -10,7 +10,7 @@ export class CountryService {
         @InjectModel(Country.name) private countryModel: Model<CountryDocument>
     ) { }
 
-    async Coutries(): Promise<Country[]> {
+    async Countries(): Promise<Country[]> {
         return this.countryModel.find()
             .populate('currency');
     }

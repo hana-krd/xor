@@ -12,8 +12,8 @@ import {
 import { User } from '../database/schemas/user.schema';
 import { GetUser } from '../user/user-decorator';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './AuthGuards/jwt-auth.guard';
-import { LocalAuthGuard } from './AuthGuards/local-auth.guard';
+import { JwtAuthGuard } from './Guards/jwt-auth.guard';
+import { LocalAuthGuard } from './Guards/local-auth.guard';
 import { SignUpDto } from './dto/signup.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 

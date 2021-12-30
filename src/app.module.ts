@@ -7,6 +7,7 @@ import { CharitiesModule } from './charities/charities.module';
 import { FamiliesModule } from './families/families.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { UserRolesModule } from './user-roles/user-roles.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { MailModule } from './mail/mail.module';
     CharitiesModule,
     FamiliesModule,
     AuthModule,
-    MailModule
+    MailModule,
+    UserRolesModule
   ],
   controllers: [],
   providers: [],

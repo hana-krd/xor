@@ -6,16 +6,9 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, _FilterQuery } from 'mongoose';
-import { UserRoleDto } from './dto/create-user-role.dto';
-import {
-  UserRole,
-  UserRoleDocument,
-} from '../database/schemas/user-role.schema';
 import { User, UserDocument } from '../database/schemas/user.schema';
-import { OrganType } from '../static/enum/organ-type.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
-import { Roles } from '../static/enum/role.enum';
 import { SignUpDto } from '../auth/dto/signup.dto';
 import { randomInt } from 'crypto';
 import * as bcrypt from 'bcrypt';
@@ -25,7 +18,6 @@ import { VerifyOtpDto } from '../auth/dto/verify-otp.dto';
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @InjectModel(UserRole.name) private userRoleModel: Model<UserRoleDocument>,
   ) {}
 
   async createUserWithoutCredential(
@@ -170,46 +162,6 @@ export class UserService {
     return result;
   }
 
-  async addRole(userRoleDto: UserRoleDto): Promise<UserRole> {
-    const userRole = await this.userRoleModel
-      .findOne({
-        $and: [{ user: userRoleDto.user }, { organ: userRoleDto.organ }],
-      })
-      .populate('roles')
-      .exec();
-
-    if (userRole) {
-      const newRoles: Roles[] = userRoleDto.roles.filter((role) => {
-        if (userRole.roles.indexOf(role) === -1) {
-          return role;
-        }
-      });
-
-      newRoles.forEach((role) => {
-        userRole.roles.push(role);
-      });
-
-      return userRole.save();
-    } else {
-      return this.userRoleModel.create(userRoleDto);
-    }
-  }
-
-  async deleteAllRoles(userRoleId: string) {
-    return this.userRoleModel.deleteOne({ _id: userRoleId }).exec();
-  }
-
-  async deleteSomeRoles(userRoleId: string, role: Roles) {
-    const userRole = await this.userRoleModel.findOne({ _id: userRoleId });
-
-    if (!userRole) {
-      throw new NotFoundException('this user is not in your charity');
-    }
-
-    userRole.roles = userRole.roles.filter((localRole) => localRole !== role);
-    return userRole.save();
-  }
-
   async newOtp(user: User): Promise<string> {
     const otp = randomInt(111111, 999999).toString();
     const hashed = await bcrypt.hash(otp, user.salt);
@@ -221,7 +173,7 @@ export class UserService {
       user.extraInfo = {};
     }
 
-    //TODO change otp for different platform and different ips 
+    //TODO change otp for different platform and different ips
     //mobile otp, email otp, from web, from android, from ios,
     await this.userModel.updateOne(
       { _id: user._id },
@@ -261,7 +213,7 @@ export class UserService {
     return true;
   }
 
-  async emailVerified(user: User):Promise<void> {
+  async emailVerified(user: User): Promise<void> {
     await this.userModel.updateOne(
       { _id: user._id },
       {
