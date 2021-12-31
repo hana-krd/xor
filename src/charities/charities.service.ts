@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Charity, CharityDocument } from '../database/schemas/charity.schema';
-import { Family } from '../database/schemas/family.schema';
+import { Family, FamilyDocument } from '../database/schemas/family.schema';
 import { UserRole } from '../database/schemas/user-role.schema';
 import { User } from '../database/schemas/user.schema';
 import { CreateFamilyDto } from '../families/dto/create-family.dto';
@@ -137,7 +137,25 @@ export class CharitiesService {
     return false;
   }
 
-  async addMember(charityId: string, userDto: CreateUserDto): Promise<boolean> {
+  async isUserMemberOfFamily(
+    charityId: string,
+    familyId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const family = await this.getFamilyById(charityId, familyId);
+    const members: String[] = family.members;
+
+    if (members && members.indexOf(userId) >= 0) {
+      return true;
+    }
+    return false;
+  }
+
+  async addMember(
+    charityId: string,
+    familyId: string,
+    userDto: CreateUserDto,
+  ): Promise<boolean> {
     var user = await this.userService
       .findUserByNationality(userDto.nationality, userDto.nationalCode)
       .catch((err) => {
@@ -148,43 +166,46 @@ export class CharitiesService {
       user = await this.userService.createUser(userDto);
     }
 
-    if (await this.isUserMemberOfCharity(charityId, user._id.toString())) {
-      throw new BadRequestException('User Already in charity');
+    if (!(await this.isFamilyInCharity(charityId, familyId))) {
+      throw new NotFoundException('Family is not in your charity');
     }
 
-    const charity = await this.getCharityById(charityId);
-    charity.members.push(user._id);
-    await charity.save();
+    await this.familyService.addMember(familyId, user._id.toString());
 
     return true;
   }
 
   async searchMembers(
     charityId: string,
+    familyId: string,
     filters: UserFilterDto,
   ): Promise<User[]> {
-    const charity = await this.getCharityById(charityId);
+    const family = await this.getFamilyById(charityId, familyId);
 
-    filters.usersIn = charity.members;
+    filters.usersIn = family.members;
 
     return await this.userService.search(filters);
   }
 
   async updateMember(
     charityId: string,
+    familyId: string,
     userId: string,
     userDto: CreateUserDto,
   ): Promise<boolean> {
-    if (!(await this.isUserMemberOfCharity(charityId, userId))) {
+    if (!(await this.isUserMemberOfFamily(charityId, familyId, userId))) {
       throw new NotFoundException('User is not in your charity');
     }
+
     return await this.userService.updateUser(userId, userDto);
   }
 
-  async getMember(charityId: string, userId: string): Promise<User> {
-    if (!(await this.isUserMemberOfCharity(charityId, userId))) {
+  async getMember(charityId: string, familyId: string, userId: string): Promise<User> {
+    
+    if (!(await this.isUserMemberOfFamily(charityId, familyId, userId))) {
       throw new NotFoundException('User is not in your charity');
     }
+
     return await this.userService.findUserById(userId);
   }
 
@@ -212,7 +233,10 @@ export class CharitiesService {
     return await this.familyService.search(filters);
   }
 
-  async getFamily(charityId: string, familyId: string): Promise<Family> {
+  async getFamilyById(
+    charityId: string,
+    familyId: string,
+  ): Promise<FamilyDocument> {
     if (!(await this.isFamilyInCharity(charityId, familyId))) {
       throw new NotFoundException('Family is not in your charity');
     }

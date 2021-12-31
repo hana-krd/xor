@@ -51,56 +51,6 @@ export class CharitiesController {
     });
   }
 
-  @Post(':charityId/member')
-  @UsePipes(ValidationPipe)
-  async addCharityMember(
-    @Param('charityId') charityId: string,
-    @Body() createUser: CreateUserDto,
-    @Res() res,
-  ) {
-    await this.charityService.addMember(charityId, createUser);
-    return res.status(200).json({
-      message: 'User Added Successfully',
-    });
-  }
-
-  @Get(':charityId/member')
-  async searchMembers(
-    @Body() filters: UserFilterDto,
-    @Param('charityId') charityId: string,
-    @Res() res,
-  ) {
-    return res.status(200).json({
-      users: await this.charityService.searchMembers(charityId, filters),
-    });
-  }
-
-  @Put(':charityId/member/:userId')
-  @UsePipes(ValidationPipe)
-  async updateMember(
-    @Param('charityId') charityId: string,
-    @Param('userId') userId: string,
-    @Body() userDto: CreateUserDto,
-    @Res() res,
-  ) {
-    const result = await this.charityService.updateMember(
-      charityId,
-      userId,
-      userDto,
-    );
-    return res.status(200).json({
-      message: result ? 'updated successfully' : 'nothing happened',
-    });
-  }
-
-  @Get(':charityId/member/:userId')
-  async getMember(
-    @Param('charityId') charityId: string,
-    @Param('userId') userId: string,
-  ) {
-    return await this.charityService.getMember(charityId, userId);
-  }
-
   @Delete(':charityId/manager')
   async removeCharityManager(
     @Param('charityId') charityId: string,
@@ -147,6 +97,62 @@ export class CharitiesController {
     @Param('familyId') familyId: string,
     @Param('charityId') charityId: string,
   ) {
-    return this.charityService.getFamily(charityId, familyId);
+    return this.charityService.getFamilyById(charityId, familyId);
+  }
+
+
+  @Post(':charityId/families/:familyId/member')
+  @UsePipes(ValidationPipe)
+  async addCharityMember(
+    @Param('charityId') charityId: string,
+    @Param('familyId') familyId: string,
+    @Body() createUser: CreateUserDto,
+    @Res() res,
+  ) {
+    await this.charityService.addMember(charityId, familyId, createUser);
+    return res.status(200).json({
+      message: 'User Added Successfully',
+    });
+  }
+
+  @Get(':charityId/families/:familyId/member')
+  async searchMembers(
+    @Body() filters: UserFilterDto,
+    @Param('charityId') charityId: string,
+    @Param('familyId') familyId: string,
+    @Res() res,
+  ) {
+    return res.status(200).json({
+      users: await this.charityService.searchMembers(charityId, familyId, filters),
+    });
+  }
+
+  @Put(':charityId/families/:familyId/member/:userId')
+  @UsePipes(ValidationPipe)
+  async updateMember(
+    @Param('charityId') charityId: string,
+    @Param('familyId') familyId: string,
+    @Param('userId') userId: string,
+    @Body() userDto: CreateUserDto,
+    @Res() res,
+  ) {
+    const result = await this.charityService.updateMember(
+      charityId,
+      familyId,
+      userId,
+      userDto,
+    );
+    return res.status(200).json({
+      message: result ? 'updated successfully' : 'nothing happened',
+    });
+  }
+
+  @Get(':charityId/families/:familyId/member/:userId')
+  async getMember(
+    @Param('charityId') charityId: string,
+    @Param('familyId') familyId: string,
+    @Param('userId') userId: string,
+  ) {
+    return await this.charityService.getMember(charityId, familyId, userId);
   }
 }

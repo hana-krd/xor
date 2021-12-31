@@ -19,7 +19,7 @@ export class Family {
             }
         ]
     })
-    members;
+    members:string[];
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
