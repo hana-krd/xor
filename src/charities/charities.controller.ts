@@ -15,6 +15,8 @@ import { JwtAuthGuard } from '../auth/Guards/jwt-auth.guard';
 import { UserRolesGuard } from '../auth/Guards/user-role.guard';
 import { UserVerifiedGuard } from '../auth/Guards/user-verified.guard';
 import { User } from '../database/schemas/user.schema';
+import { CreateFamilyDto } from '../families/dto/create-family.dto';
+import { FamilyFilterDto } from '../families/dto/family-filter.dto';
 import { Roles } from '../static/enum/role.enum';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserFilterDto } from '../user/dto/user-filter.dto';
@@ -81,7 +83,11 @@ export class CharitiesController {
     @Body() userDto: CreateUserDto,
     @Res() res,
   ) {
-    const result = await this.charityService.updateMember(charityId, userId, userDto);
+    const result = await this.charityService.updateMember(
+      charityId,
+      userId,
+      userDto,
+    );
     return res.status(200).json({
       message: result ? 'updated successfully' : 'nothing happened',
     });
@@ -92,7 +98,7 @@ export class CharitiesController {
     @Param('charityId') charityId: string,
     @Param('userId') userId: string,
   ) {
-    return  await this.charityService.getMember(charityId, userId);
+    return await this.charityService.getMember(charityId, userId);
   }
 
   @Delete(':charityId/manager')
@@ -116,5 +122,31 @@ export class CharitiesController {
     @Body('userId') userId: string,
   ) {
     return this.charityService.deleteManagerRole(charityId, userId, role);
+  }
+
+  @Post(':charityId/families')
+  createFamily(
+    @Body() familyDto: CreateFamilyDto,
+    @GetUser() admin: User,
+    @Param('charityId') charityId: string,
+  ) {
+    return this.charityService.createFamily(charityId, familyDto, admin);
+  }
+
+  @Get(':charityId/families')
+  @UsePipes(ValidationPipe)
+  searchFamilies(
+    @Param('charityId') charityId: string,
+    @Body() filter: FamilyFilterDto,
+  ) {
+    return this.charityService.getFamilies(charityId, filter);
+  }
+
+  @Get(':charityId/families/:familyId')
+  getFamily(
+    @Param('familyId') familyId: string,
+    @Param('charityId') charityId: string,
+  ) {
+    return this.charityService.getFamily(charityId, familyId);
   }
 }

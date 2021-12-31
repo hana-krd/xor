@@ -5,11 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Charity, CharitySchema } from '../database/schemas/charity.schema';
 import { UserModule } from '../user/user.module';
 import { UserRolesModule } from '../user-roles/user-roles.module';
+import { FamiliesModule } from '../families/families.module';
 
 @Module({
   imports: [
     UserModule,
     UserRolesModule,
+    FamiliesModule,
     MongooseModule.forFeature([
       { name: Charity.name, schema: CharitySchema},
     ]),

@@ -6,6 +6,8 @@ export type FamilyDocument = Family & Document;
 @Schema({ timestamps: true })
 export class Family {
 
+    _id: mongoose.Schema.Types.ObjectId;
+
     @Prop()
     name: string;
         
