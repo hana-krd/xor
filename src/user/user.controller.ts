@@ -32,7 +32,7 @@ export class UserController {
   @Post()
   @UsePipes(ValidationPipe)
   createUser(@Body() createUser: CreateUserDto): Promise<User> {
-    return this.userService.createUserWithoutCredential(createUser);
+    return this.userService.createUser(createUser);
   }
 
   @Get(':id')
@@ -49,18 +49,15 @@ export class UserController {
   }
 
   @Put(':id')
+  @UsePipes(ValidationPipe)
   async updateUserInformation(
-    @Param('id') userId: string,
-    @Param('filed') filed: string,
     @Body() userDto: CreateUserDto,
+    @Param('id') userId: string,
     @Res() res,
   ) {
     const result = await this.userService.updateUser(userId, userDto);
     return res.status(200).json({
-      message:
-        result.modifiedCount | result.matchedCount
-          ? 'updated successfully'
-          : 'nothing happened',
+      message: result ? 'updated successfully' : 'nothing happened',
     });
   }
 

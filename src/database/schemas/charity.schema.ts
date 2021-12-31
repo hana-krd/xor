@@ -4,7 +4,6 @@ import { Country } from './country.schema';
 import * as mongoose from 'mongoose';
 import { File } from './file.schema';
 import { User } from './user.schema';
-import { UserRole } from './user-role.schema';
 
 export type CharityDocument = Charity & Document;
 
@@ -64,7 +63,15 @@ export class Charity {
             { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
         ]
     })
-    needies: User[];
+    members;
+
+
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'Family' }
+        ]
+    })
+    families;
 
 
     //TODO we need to know about charities legal document

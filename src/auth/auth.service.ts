@@ -49,7 +49,7 @@ export class AuthService {
 
     signupDto.password = await bcrypt.hash(signupDto.password, signupDto.salt);
 
-    const user = await this.usersService.createUserWithCredential(signupDto);
+    const user = await this.usersService.createUser(signupDto);
 
     const otp = (await this.usersService.newOtp(user)).toString();
     const mailResult = await this.mailService.sendOtp(otp, user.email);

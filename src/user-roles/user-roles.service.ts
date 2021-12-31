@@ -41,12 +41,12 @@ export class UserRolesService {
     }
   }
 
-  async deleteAllRoles(userRoleId: string) {
-    return this.userRoleModel.deleteOne({ _id: userRoleId }).exec();
+  async deleteAllRoles(charityId: string, userId: string) {
+    return this.userRoleModel.deleteOne({ organ: charityId, user: userId }).exec();
   }
 
-  async deleteSomeRoles(userRoleId: string, role: Roles) {
-    const userRole = await this.userRoleModel.findOne({ _id: userRoleId });
+  async deleteSomeRoles(charityId: string, userId: string, role: Roles) {
+    const userRole = await this.userRoleModel.findOne({ organ: charityId, user: userId });
 
     if (!userRole) {
       throw new NotFoundException('this user is not in your charity');

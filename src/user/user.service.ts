@@ -16,35 +16,21 @@ import { VerifyOtpDto } from '../auth/dto/verify-otp.dto';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async createUserWithoutCredential(
-    createUserDto: CreateUserDto,
-  ): Promise<User> {
+  async createUser(userDto: CreateUserDto | SignUpDto): Promise<UserDocument> {
     const found = await this.userModel.findOne({
       $and: [
-        { nationality: createUserDto.nationality },
-        { nationalCode: createUserDto.nationalCode },
+        userDto.nationality ? { nationality: userDto.nationality } : {},
+        userDto.nationalCode ? { nationalCode: userDto.nationalCode } : {},
+        userDto.email ? { email: userDto.email } : {},
       ],
     });
 
     if (found) {
-      throw new ConflictException(
-        `User National Code ${createUserDto.nationalCode} already exists`,
-      );
+      throw new ConflictException(`User already exists`);
     }
-    return this.userModel.create(createUserDto);
-  }
-
-  async createUserWithCredential(signupDto: SignUpDto): Promise<UserDocument> {
-    const found = await this.userModel.findOne({ email: signupDto.email });
-
-    if (found) {
-      throw new ConflictException(`Email ${signupDto.email} already exists`);
-    }
-    return this.userModel.create(signupDto);
+    return this.userModel.create(userDto);
   }
 
   async findUserById(userId): Promise<User> {
@@ -69,6 +55,24 @@ export class UserService {
       .populate('nationality')
       .populate('avatar')
       .exec();
+
+    if (!found) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    return found;
+  }
+
+  async findUserByNationality(
+    nationality: string,
+    nationalCode: string,
+  ): Promise<User> {
+    const found = await this.userModel
+      .findOne({
+        $and: [{ nationalCode: nationalCode }, { nationality: nationality }],
+      })
+      .populate('nationality')
+      .populate('avatar');
 
     if (!found) {
       throw new NotFoundException(`User not found`);
@@ -109,9 +113,16 @@ export class UserService {
           filters.income_lower_than
             ? {
                 income: {
-                  $lte: filters.income_lower_than,
+                  $lt: filters.income_lower_than,
                   $exists: true,
                   $ne: null,
+                },
+              }
+            : {},
+          filters.usersIn
+            ? {
+                _id: {
+                  $in: filters.usersIn,
                 },
               }
             : {},
@@ -124,7 +135,7 @@ export class UserService {
     return found;
   }
 
-  async updateUser(userId: string, userDto: CreateUserDto): Promise<any> {
+  async updateUser(userId: string, userDto: CreateUserDto): Promise<boolean> {
     await this.findUserById(userId);
     const result = await this.userModel
       .updateOne(
@@ -143,7 +154,7 @@ export class UserService {
       )
       .exec();
 
-    return result;
+    return result.modifiedCount > 0 || result.matchedCount > 0;
   }
 
   async updateUserAvatar(userId: string, fileId: string) {

@@ -2,14 +2,15 @@ import { IsNotEmpty, IsString } from "class-validator";
 
 export class FamilyFilterDto {
 
-    name: string;
+    name?: string;
 
-    charity: string;
+    charity?: string;
 
-    head: string;
+    head?: string;
 
-    creator: string;
+    creator?: string;
 
-    memberCount: number;
+    memberCount?: number;
 
+    familiesIn?: string[];
 }
