@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { User } from "./user.schema";
 import * as mongoose from 'mongoose';
 
 export type FamilyDocument = Family & Document;

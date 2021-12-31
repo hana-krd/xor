@@ -66,6 +66,14 @@ export class Charity {
     members;
 
 
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'Family' }
+        ]
+    })
+    families;
+
+
     //TODO we need to know about charities legal document
     // and their licenses
     @Prop({

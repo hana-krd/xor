@@ -87,6 +87,14 @@ export class CharitiesController {
     });
   }
 
+  @Get(':charityId/member/:userId')
+  async getMember(
+    @Param('charityId') charityId: string,
+    @Param('userId') userId: string,
+  ) {
+    return  await this.charityService.getMember(charityId, userId);
+  }
+
   @Delete(':charityId/manager')
   async removeCharityManager(
     @Param('charityId') charityId: string,

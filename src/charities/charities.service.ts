@@ -88,7 +88,10 @@ export class CharitiesService {
 
   async deleteManager(charityId: string, userId: string) {
     const charity = await this.getCharityById(charityId);
-    const deleteResult = this.userRolesService.deleteAllRoles(charityId, userId);
+    const deleteResult = this.userRolesService.deleteAllRoles(
+      charityId,
+      userId,
+    );
 
     charity.admins = charity.admins.filter(
       (admin) => admin._id.toString() !== userId,
@@ -138,7 +141,10 @@ export class CharitiesService {
     return true;
   }
 
-  async searchMembers(charityId:string, filters: UserFilterDto): Promise<User[]> {
+  async searchMembers(
+    charityId: string,
+    filters: UserFilterDto,
+  ): Promise<User[]> {
     const charity = await this.getCharityById(charityId);
 
     filters.usersIn = charity.members;
@@ -146,10 +152,21 @@ export class CharitiesService {
     return await this.userService.search(filters);
   }
 
-  async updateMember(charityId:string, userId: string, userDto: CreateUserDto): Promise<boolean> {
+  async updateMember(
+    charityId: string,
+    userId: string,
+    userDto: CreateUserDto,
+  ): Promise<boolean> {
     if (!(await this.isUserMemberOfCharity(charityId, userId))) {
       throw new NotFoundException('User is not in your charity');
     }
-    return  await this.userService.updateUser(userId, userDto);
+    return await this.userService.updateUser(userId, userDto);
+  }
+
+  async getMember(charityId: string, userId: string): Promise<User> {
+    if (!(await this.isUserMemberOfCharity(charityId, userId))) {
+      throw new NotFoundException('User is not in your charity');
+    }
+    return await this.userService.findUserById(userId);
   }
 }
