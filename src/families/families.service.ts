@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Family, FamilyDocument } from '../database/schemas/family.schema';
@@ -17,7 +21,7 @@ export class FamiliesService {
     return this.familyModel.create(familyDto);
   }
 
-  async findFamilyById(familyId: string): Promise<Family> {
+  async findFamilyById(familyId: string): Promise<FamilyDocument> {
     const found = await this.familyModel.findOne({ _id: familyId });
 
     if (!found) {
@@ -42,5 +46,26 @@ export class FamiliesService {
         ],
       })
       .exec();
+  }
+
+  async addMember(familyId: string, userId: string): Promise<boolean> {
+    const family = await this.findFamilyById(familyId);
+
+    if (family.members.indexOf(userId) >= 0) {
+      throw new ConflictException('User already in this family');
+    }
+
+    family.members.push(userId);
+
+    await this.familyModel.updateOne(
+      { _id: familyId },
+      {
+        $set: {
+          members: family.members,
+        },
+      },
+    );
+
+    return true;
   }
 }
