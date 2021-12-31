@@ -1,42 +1,44 @@
 import {
-    IsMobilePhone,
-    IsNotEmpty,
-    IsNumber,
-    IsString,
-    MaxLength,
-    MinLength,
+  IsMobilePhone,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class CreateUserDto {
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(2)
-    @MaxLength(200)
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(200)
+  name: string;
 
-    middleName: string;
+  middleName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(2)
-    @MaxLength(200)
-    family: string;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(200)
+  family: string;
 
-    avatar: string;
+  avatar: string;
 
-    @IsString()
-    @IsMobilePhone()
-    mobile?: string;
+  @IsString()
+  @IsMobilePhone()
+  mobile?: string;
 
-    @IsNotEmpty()
-    nationality: string;
+  email: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(8)
-    @MaxLength(200)
-    nationalCode: string;
+  @IsNotEmpty()
+  nationality: string;
 
-    @IsNumber()
-    income: number;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
+  @MaxLength(200)
+  nationalCode: string;
+
+  @IsNumber()
+  income: number;
 }

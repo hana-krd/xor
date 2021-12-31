@@ -1,79 +1,112 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Post,
-    Res,
-    UseGuards,
-    UsePipes,
-    ValidationPipe,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Res,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/Guards/jwt-auth.guard';
+import { UserRolesGuard } from '../auth/Guards/user-role.guard';
 import { UserVerifiedGuard } from '../auth/Guards/user-verified.guard';
 import { User } from '../database/schemas/user.schema';
 import { Roles } from '../static/enum/role.enum';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserFilterDto } from '../user/dto/user-filter.dto';
 import { GetUser } from '../user/user-decorator';
 import { CharitiesService } from './charities.service';
 import { createCharityDto } from './dto/create-charity.dto';
 
-@UseGuards(JwtAuthGuard, UserVerifiedGuard)
+@UseGuards(JwtAuthGuard, UserVerifiedGuard, UserRolesGuard)
 @Controller('charities')
 export class CharitiesController {
-    constructor(
-        private charityService: CharitiesService,
-    ) { }
+  constructor(private charityService: CharitiesService) {}
 
-    @Post('')
-    @UsePipes(ValidationPipe)
-    async createCharity(
-        @Body() createCharity: createCharityDto,
-        @GetUser() user: User,
-    ) {
-        return this.charityService.createCharity(
-            createCharity,
-            user,
-        );
-    }
+  @Post('')
+  @UsePipes(ValidationPipe)
+  async createCharity(
+    @Body() createCharity: createCharityDto,
+    @GetUser() user: User,
+  ) {
+    return this.charityService.createCharity(createCharity, user);
+  }
 
-    @Post('/manager')
-    async addCharityManager(
-        @Body('userId') user: string,
-        @Body('charityId') charity: string,
-        @Body('roles') roles: Roles[],
-        @Res() res
-    ) {
-        await this.charityService.addManager(
-            charity,
-            roles,
-            user
-        );
-        return res.status(200)
-            .json({
-                message: 'updated successfully'
-            });
-    }
+  @Post(':charityId/manager')
+  async addCharityManager(
+    @Param('charityId') charityId: string,
+    @Body('userId') user: string,
+    @Body('roles') roles: Roles[],
+    @Res() res,
+  ) {
+    await this.charityService.addManager(charityId, roles, user);
+    return res.status(200).json({
+      message: 'updated successfully',
+    });
+  }
 
-    @Delete('/manager')
-    async removeCharityManager(
-        @Body('charityId') charity: string,
-        @Body('userRoleId') userRoleId: string,
-        @Res() res
-    ) {
-        const result = await this.charityService.deleteManager(charity, userRoleId);
-        return res.status(200)
-            .json({
-                message:
-                    (result.deletedCount) ?
-                        'deleted successfully' : 'nothing happened'
-            });
-    }
+  @Post(':charityId/member')
+  @UsePipes(ValidationPipe)
+  async addCharityMember(
+    @Param('charityId') charityId: string,
+    @Body() createUser: CreateUserDto,
+    @Res() res,
+  ) {
+    await this.charityService.addMember(charityId, createUser);
+    return res.status(200).json({
+      message: 'User Added Successfully',
+    });
+  }
 
-    @Delete('/manager/role')
-    async removeCharityManagerRole(
-        @Body('role') role: Roles,
-        @Body('userRoleId') userRoleId: string
-    ) {
-        return this.charityService.deleteManagerRole(userRoleId, role);
-    }
+  @Get(':charityId/member')
+  async searchMembers(
+    @Body() filters: UserFilterDto,
+    @Param('charityId') charityId: string,
+    @Res() res,
+  ) {
+    return res.status(200).json({
+      users: await this.charityService.searchMembers(charityId, filters),
+    });
+  }
 
+  @Put(':charityId/member/:userId')
+  @UsePipes(ValidationPipe)
+  async updateMember(
+    @Param('charityId') charityId: string,
+    @Param('userId') userId: string,
+    @Body() userDto: CreateUserDto,
+    @Res() res,
+  ) {
+    const result = await this.charityService.updateMember(charityId, userId, userDto);
+    return res.status(200).json({
+      message: result ? 'updated successfully' : 'nothing happened',
+    });
+  }
+
+  @Delete(':charityId/manager')
+  async removeCharityManager(
+    @Param('charityId') charityId: string,
+    @Body('userId') userId: string,
+    @Res() res,
+  ) {
+    const result = await this.charityService.deleteManager(charityId, userId);
+    return res.status(200).json({
+      message: result.deletedCount
+        ? 'deleted successfully'
+        : 'nothing happened',
+    });
+  }
+
+  @Delete(':charityId/manager/role')
+  async removeCharityManagerRole(
+    @Param('charityId') charityId: string,
+    @Body('role') role: Roles,
+    @Body('userId') userId: string,
+  ) {
+    return this.charityService.deleteManagerRole(charityId, userId, role);
+  }
 }

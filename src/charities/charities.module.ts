@@ -8,6 +8,7 @@ import { UserRolesModule } from '../user-roles/user-roles.module';
 
 @Module({
   imports: [
+    UserModule,
     UserRolesModule,
     MongooseModule.forFeature([
       { name: Charity.name, schema: CharitySchema},

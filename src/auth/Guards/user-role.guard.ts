@@ -16,12 +16,13 @@ export class UserRolesGuard implements CanActivate {
     const roles = this.reflector.get<Roles[]>('roles', context.getHandler());
 
     if (!roles) {
-      return false;
+      return true;
     }
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const charityId = request.body!.charityId;
+    
+    const charityId = request.params!.charityId;
     return this.matchRoles(roles, user, charityId);
   }
 

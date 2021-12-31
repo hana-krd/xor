@@ -1,24 +1,25 @@
-import { Roles } from "../../static/enum/role.enum";
+import { Roles } from '../../static/enum/role.enum';
 
-export class UserFilterDto{
+export class UserFilterDto {
+  name?: string;
 
-    name?: string;
+  middleName?: string;
 
-    middleName?: string;
+  family?: string;
 
-    family?: string;
+  avatar?: string;
 
-    avatar?: string;
+  mobile?: string;
 
-    mobile?: string;
+  nationality?: string;
 
-    nationality?: string;
+  nationalCode?: string;
 
-    nationalCode?: string;
+  roles?: Roles[];
 
-    roles?: Roles[];
+  income_greater_than?: number;
 
-    income_greater_than?: number;
+  income_lower_than?: number;
 
-    income_lower_than?: number;
+  usersIn?: string[];
 }
