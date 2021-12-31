@@ -31,9 +31,7 @@ export class UserRolesService {
         }
       });
 
-      newRoles.forEach((role) => {
-        userRole.roles.push(role);
-      });
+      userRole.roles.concat(newRoles);
 
       return userRole.save();
     } else {

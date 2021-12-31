@@ -115,15 +115,15 @@ export class CharitiesController {
     });
   }
 
-  @Get(':charityId/families/:familyId/member')
+  @Get(':charityId/member')
   async searchMembers(
     @Body() filters: UserFilterDto,
     @Param('charityId') charityId: string,
-    @Param('familyId') familyId: string,
     @Res() res,
   ) {
+    
     return res.status(200).json({
-      users: await this.charityService.searchMembers(charityId, familyId, filters),
+      users: await this.charityService.searchMembers(charityId, filters),
     });
   }
 

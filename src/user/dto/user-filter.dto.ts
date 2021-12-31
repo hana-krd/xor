@@ -1,6 +1,8 @@
 import { Roles } from '../../static/enum/role.enum';
 
 export class UserFilterDto {
+  charityId?: string;
+
   name?: string;
 
   middleName?: string;

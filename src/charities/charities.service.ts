@@ -177,12 +177,22 @@ export class CharitiesService {
 
   async searchMembers(
     charityId: string,
-    familyId: string,
     filters: UserFilterDto,
   ): Promise<User[]> {
-    const family = await this.getFamilyById(charityId, familyId);
+    const charity = await (
+      await this.getCharityById(charityId)
+    ).populate('families');
 
-    filters.usersIn = family.members;
+    if (!charity || !charity.families) {
+      throw new NotFoundException('Search result empty');
+    }
+    filters.usersIn = [];
+
+    charity.families.forEach((family) => {
+      if (family.members) {
+        filters.usersIn = filters.usersIn.concat(family.members);
+      }
+    });
 
     return await this.userService.search(filters);
   }
@@ -200,8 +210,11 @@ export class CharitiesService {
     return await this.userService.updateUser(userId, userDto);
   }
 
-  async getMember(charityId: string, familyId: string, userId: string): Promise<User> {
-    
+  async getMember(
+    charityId: string,
+    familyId: string,
+    userId: string,
+  ): Promise<User> {
     if (!(await this.isUserMemberOfFamily(charityId, familyId, userId))) {
       throw new NotFoundException('User is not in your charity');
     }
