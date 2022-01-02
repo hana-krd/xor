@@ -1,3 +1,4 @@
+
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
@@ -6,7 +7,7 @@ import { SendEmailDto } from './dto/send-email.dto';
 @Injectable()
 export class MailService {
     constructor(
-        @InjectQueue('email') private emailQueue: Queue
+        @InjectQueue('email') private emailQueue: Queue,
     ){}
 
     async sendOtp(otp: string, receiver: string) {
