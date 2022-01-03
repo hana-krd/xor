@@ -8,6 +8,7 @@ import { FamiliesModule } from './families/families.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { UserRolesModule } from './user-roles/user-roles.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -20,6 +21,12 @@ import { UserRolesModule } from './user-roles/user-roles.module';
         }
       }
     ),
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
     UserModule,
     CountryModule,
     FileModule,

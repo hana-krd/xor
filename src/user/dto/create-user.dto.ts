@@ -2,6 +2,7 @@ import {
   IsMobilePhone,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -12,6 +13,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(2)
   @MaxLength(200)
+  @IsOptional()
   name: string;
 
   middleName: string;
@@ -20,25 +22,30 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(2)
   @MaxLength(200)
+  @IsOptional()
   family: string;
 
   avatar: string;
 
   @IsString()
   @IsMobilePhone()
+  @IsOptional()
   mobile?: string;
 
   email: string;
 
   @IsNotEmpty()
+  @IsOptional()
   nationality: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
   @MaxLength(200)
+  @IsOptional()
   nationalCode: string;
 
   @IsNumber()
+  @IsOptional()
   income: number;
 }

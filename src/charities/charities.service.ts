@@ -47,34 +47,24 @@ export class CharitiesService {
     charityDto.owner = user._id.toString();
     const charity = await this.charityModel.create(charityDto);
 
-    const defaultAdmin = await this.addDefaultAdmin(charity, user);
-    charity.admins.push(defaultAdmin);
+    await this.addManager(
+      charity._id,
+      [Roles.CHARITY_CREATOR],
+      user._id.toString(),
+    );
+    charity.admins.push(user._id);
     charity.save();
 
     return charity;
   }
 
-  private async addDefaultAdmin(
-    charity: Charity,
-    user: User,
-  ): Promise<UserRole> {
-    const userRoleDto: UserRoleDto = {
-      user: user._id.toString(),
-      organ: charity._id.toString(),
-      organType: OrganType.CHARITY,
-      roles: [Roles.CHARITY_CREATOR],
-    };
-
-    return await this.userRolesService.addRole(userRoleDto);
-  }
-
   async addManager(
     charityId: string,
     roles: Roles[],
-    user: string,
+    userId: string,
   ): Promise<UserRole> {
     const userRoleDto: UserRoleDto = {
-      user: user,
+      user: userId,
       organ: charityId,
       organType: OrganType.CHARITY,
       roles: roles,
@@ -83,8 +73,8 @@ export class CharitiesService {
     const charity = await this.getCharityById(charityId);
     const userRole = await this.userRolesService.addRole(userRoleDto);
 
-    if (charity.admins.indexOf(userRole._id) === -1) {
-      charity.admins.push(user);
+    if (charity.admins.indexOf(userId) === -1) {
+      charity.admins.push(userId);
       charity.save();
     }
 
@@ -108,20 +98,6 @@ export class CharitiesService {
 
   async deleteManagerRole(charityId: string, userId: string, role: Roles) {
     return this.userRolesService.deleteSomeRoles(charityId, userId, role);
-  }
-
-  async isUserMemberOfCharity(
-    charityId: string,
-    userId: string,
-  ): Promise<boolean> {
-    const charity = await this.getCharityById(charityId);
-    const members: String[] = charity.members;
-
-    //compare users are not same
-    if (members && members.indexOf(userId) >= 0) {
-      return true;
-    }
-    return false;
   }
 
   async isFamilyInCharity(
