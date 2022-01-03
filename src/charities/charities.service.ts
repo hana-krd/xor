@@ -52,8 +52,6 @@ export class CharitiesService {
       [Roles.CHARITY_CREATOR],
       user._id.toString(),
     );
-    charity.admins.push(user._id);
-    charity.save();
 
     return charity;
   }
