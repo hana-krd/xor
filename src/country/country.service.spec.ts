@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+/* import { Model } from "mongoose";
 import { async } from "rxjs";
 import { Country, CountryDocument } from "../database/schemas/country.schema";
 
@@ -29,4 +29,4 @@ describe('countryService', ()=>{
         expect(countryModel.populate).toBeCalled();
     })
 
-});
+}); */

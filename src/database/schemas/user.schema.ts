@@ -11,7 +11,7 @@ export type UserDocument = User & Document;
 @Schema({ timestamps: true })
 export class User {
 
-    _id: mongoose.ObjectId;
+    _id;
 
     @Prop({
         required: false,
@@ -30,7 +30,7 @@ export class User {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'File'
     })
-    avatar: File;
+    avatar;
 
     @Prop()
     mobile: string;
@@ -39,7 +39,7 @@ export class User {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Country',
     })
-    nationality: Country;
+    nationality;
 
     @Prop()
     nationalCode: string;

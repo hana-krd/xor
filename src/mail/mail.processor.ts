@@ -16,7 +16,8 @@ export class EmailConsumer {
     async transcode(job: Job<SendEmailDto>) {
       const data = job.data;
       
-      /*await this.mailerService.sendMail({
+      /*todo implement mailer 
+      await this.mailerService.sendMail({
         to: data.receiverEmail,
         // from: '"Support Team" <support@example.com>', // override default from
         subject: data.subject,

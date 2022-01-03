@@ -5,21 +5,23 @@ import {
   IsOptional,
   Matches,
 } from 'class-validator';
+import { partials } from 'handlebars';
 import { CreateUserDto } from '../../user/dto/create-user.dto';
 
-export class SignUpDto extends CreateUserDto {
+export class SignUpDto extends CreateUserDto
+{
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
   @IsMobilePhone()
   @IsOptional()
-  mobile: string;
+  mobile?: string;
 
   @IsOptional()
-  nationality: string;
+  nationality?: string;
 
-  salt: string;
+  salt?: string;
 
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'Password is too weak',

@@ -14,38 +14,38 @@ export class CreateUserDto {
   @MinLength(2)
   @MaxLength(200)
   @IsOptional()
-  name: string;
+  name?: string;
 
-  middleName: string;
+  middleName?: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(2)
   @MaxLength(200)
   @IsOptional()
-  family: string;
+  family?: string;
 
-  avatar: string;
+  avatar?: string;
 
   @IsString()
   @IsMobilePhone()
   @IsOptional()
   mobile?: string;
 
-  email: string;
+  email?: string;
 
   @IsNotEmpty()
   @IsOptional()
-  nationality: string;
+  nationality?: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
   @MaxLength(200)
   @IsOptional()
-  nationalCode: string;
+  nationalCode?: string;
 
   @IsNumber()
   @IsOptional()
-  income: number;
+  income?: number;
 }
