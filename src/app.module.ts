@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import {ConfigModule} from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { CountryModule } from './country/country.module';
@@ -9,24 +10,14 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { UserRolesModule } from './user-roles/user-roles.module';
 import { BullModule } from '@nestjs/bull';
+import { AllHttpExceptionsFilter } from './common';
+import { bullOption } from './config/bull.config';
+import { mongoOption } from './config/mongodb.config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      "mongodb://localhost:27017/xor",
-      {
-        auth:{
-          username: "root",
-          password: "123456789"
-        }
-      }
-    ),
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
+    MongooseModule.forRoot(mongoOption.uri),
+    BullModule.forRoot(bullOption),
     UserModule,
     CountryModule,
     FileModule,
@@ -37,6 +28,6 @@ import { BullModule } from '@nestjs/bull';
     UserRolesModule
   ],
   controllers: [],
-  providers: [],
+  providers: [AllHttpExceptionsFilter],
 })
 export class AppModule {}
